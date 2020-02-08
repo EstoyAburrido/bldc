@@ -21,6 +21,10 @@ void BLDC::setPWM(int pwm){ // Метод задаёт скважность
   myinterrupt(); // запускаем метод myinterrupt
 }
 
+void BLDC::setDelay(int delay){ // Метод задаёт задержку между шагами
+  _delay = delay;
+}
+
 void BLDC::reset() // метод для перезапуска для перезарядки конденсаторов драйверов
 {
   switchPhase(0, 0, 0, 0, 0, 0); // выключаем все пины
@@ -72,7 +76,10 @@ void BLDC::setStep(int step){ // в зависимости от переданн
   _step = step + _offset;
   while (_step > 6) { _step = _step - 6; } // если коряво задано смещение - двигаем шаг в зону от 1 до 6
   while (_step < 1) { _step = _step + 6; }
-
+  if(_delay > 0){ // если задана задержка
+      switchPhase(0, 0, 0, 0, 0, 0); // выключаем все пины
+      delayMicroseconds(_delay);
+  }
   switch(_step) // в зависимости от текущего шага включаем соответствующие пины
   {
       case 1:
