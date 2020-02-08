@@ -17,6 +17,7 @@ class BLDC {
     int _TAH, _TAL, _TBH, _TBL, _TCH, _TCL, _HallA, _HallB, _HallC, _step, _pwm;
     int _offset = 0;
     int _timeout = 5;
+    int _delay = 0;
     volatile bool _vala;
     volatile bool _valb;
     volatile bool _valc;
