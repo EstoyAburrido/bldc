@@ -1,6 +1,5 @@
 #include "bldc.h"
 
-
 BLDC::BLDC(int TAH, int TAL, int TBH, int TBL, int TCH, int TCL, int HallA, int HallB, int HallC) :
   _TAH(TAH),  _TAL(TAL),  _TBH(TBH),  _TBL(TBL),  _TCH(TCH),  _TCL(TCL),  _HallA(HallA),  _HallB(HallB),  _HallC(HallC)
 {
@@ -26,7 +25,7 @@ void BLDC::reset()
 {
   switchPhase(0, 0, 0, 0, 0, 0);
   delay(_timeout);
-  _rpm = 0.0;
+  //_rpm = 0.0;
   myinterrupt();
 }
 
@@ -36,17 +35,10 @@ void BLDC::setOffset(int offset)
   myinterrupt();
 }
 
-void BLDC::setVals(bool vala, bool valb, bool valc) //временный костыль,
-{// будет убран когда в контроллере будет собран low pass фильтр и значения с датчиков холла можно будет считывать напрямую
-	_vala = vala;
-	_valb = valb;
-	_valc = valc;	
-}
-
 void BLDC::myinterrupt(){
-    //_vala = digitalRead(_HallA);
-    //_valb = digitalRead(_HallB);  
-    //_valc = digitalRead(_HallC); 
+    _vala = digitalRead(_HallA);
+    _valb = digitalRead(_HallB);  
+    _valc = digitalRead(_HallC); 
     if(_vala && !_valb && _valc) {
       setStep(1);
     } if(_vala && !_valb && !_valc) {
@@ -62,7 +54,8 @@ void BLDC::myinterrupt(){
     }
     if(_vala && !_laststate && millis() - _tmpmillis > 4) { //когда состояние датчика A сменилось с 0 на 1
     	_rpm = millis() - _tmpmillis;
-    	_rpm = (60000 / _rpm)/4; // the number 4 here because in the motor we've been using there are 4 poles.
+    	_rpm = 60000 / _rpm; 
+    	_rpm = _rpm / 4;	// the number 4 here because in the motor we've been using there are 4 poles.
 	    			// if you have a different number of poles you should change this number, otherwise
 	    			// you'd get wrong RPM value
     	_tmpmillis = millis();
