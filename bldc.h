@@ -8,6 +8,7 @@ class BLDC {
     BLDC(int TAH, int TAL, int TBH, int TBL, int TCH, int TCL, int HallA, int HallB, int HallC);
     void setOffset(int offset);
     void setPWM(int pwm);
+    void setDelay(int delay);
     void reset();
     void myinterrupt();
     float getRPM();
