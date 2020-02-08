@@ -77,7 +77,7 @@ void BLDC::setStep(int step){ // в зависимости от переданн
   while (_step > 6) { _step = _step - 6; } // если коряво задано смещение - двигаем шаг в зону от 1 до 6
   while (_step < 1) { _step = _step + 6; }
   static bool olda, oldb, oldc;
-  if(_delay > 0 && (olda != _vala || oldb != _valb || oldcc != _valc)){ // если задана задержка и сменилось состояние датчиков
+  if(_delay > 0 && (olda != _vala || oldb != _valb || oldc != _valc)){ // если задана задержка и сменилось состояние датчиков
       switchPhase(0, 0, 0, 0, 0, 0); // выключаем все пины
       delayMicroseconds(_delay);
       olda = _vala; oldb = _valb; oldc = _valc;
