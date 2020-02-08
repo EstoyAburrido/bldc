@@ -8,7 +8,6 @@ class BLDC {
     BLDC(int TAH, int TAL, int TBH, int TBL, int TCH, int TCL, int HallA, int HallB, int HallC);
     void setOffset(int offset);
     void setPWM(int pwm);
-    void setVals(bool vala, bool valb, bool valc);
     void reset();
     void myinterrupt();
     float getRPM();
@@ -23,7 +22,7 @@ class BLDC {
     volatile bool _valc;
     volatile bool _laststate;
     volatile unsigned long _tmpmillis = 0;
- 	volatile float _rpm = 0.0;
+ 	  volatile float _rpm = 0.0;
 };
 
 #endif
