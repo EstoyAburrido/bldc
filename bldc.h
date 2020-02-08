@@ -22,7 +22,7 @@ class BLDC {
     volatile bool _valc;
     volatile bool _laststate;
     volatile unsigned long _tmpmillis = 0;
- 	  volatile float _rpm = 0.0;
+    volatile float _rpm = 0.0;
 };
 
 #endif
