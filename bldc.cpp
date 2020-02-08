@@ -16,30 +16,30 @@ BLDC::BLDC(int TAH, int TAL, int TBH, int TBL, int TCH, int TCL, int HallA, int 
   _laststate = 0;
 }
 
-void BLDC::setPWM(int pwm){
-  _pwm = pwm;
-  myinterrupt();
+void BLDC::setPWM(int pwm){ // Метод задаёт скважность
+  _pwm = pwm; // Записываем переданную в метод скважность в переменную _pwm
+  myinterrupt(); // запускаем метод myinterrupt
 }
 
-void BLDC::reset()
+void BLDC::reset() // метод для перезапуска для перезарядки конденсаторов драйверов
 {
-  switchPhase(0, 0, 0, 0, 0, 0);
-  delay(_timeout);
+  switchPhase(0, 0, 0, 0, 0, 0); // выключаем все пины
+  delay(_timeout); // ждём
   //_rpm = 0.0;
-  myinterrupt();
+  myinterrupt(); // запускаем метод myinterrupt
 }
 
-void BLDC::setOffset(int offset)
+void BLDC::setOffset(int offset) // задаём смещение
 {
-  _offset = offset;
+  _offset = offset; // сохраняем смещение в переменную
   myinterrupt();
 }
 
-void BLDC::myinterrupt(){
-    _vala = digitalRead(_HallA);
+void BLDC::myinterrupt(){ // основной метод, корторый запускается при смене настроек, при срабатывании прерывания и т.п.
+    _vala = digitalRead(_HallA); // читаем датчики
     _valb = digitalRead(_HallB);  
     _valc = digitalRead(_HallC); 
-    if(_vala && !_valb && _valc) {
+    if(_vala && !_valb && _valc) { // в зависимости от положения датчиков запускаем метод setStep с разными параметрами
       setStep(1);
     } if(_vala && !_valb && !_valc) {
       setStep(2);
@@ -54,7 +54,7 @@ void BLDC::myinterrupt(){
     }
     if(_vala && !_laststate && millis() - _tmpmillis > 4) { //когда состояние датчика A сменилось с 0 на 1
     	_rpm = millis() - _tmpmillis;
-    	_rpm = 60000 / _rpm; 
+    	_rpm = 60000 / _rpm; 	// тут считаем скорость и сохраняем её в переменную _rpm
     	_rpm = _rpm / 4;	// the number 4 here because in the motor we've been using there are 4 poles.
 	    			// if you have a different number of poles you should change this number, otherwise
 	    			// you'd get wrong RPM value
@@ -63,20 +63,20 @@ void BLDC::myinterrupt(){
     _laststate = _vala;
 }
 
-float BLDC::getRPM(){
+float BLDC::getRPM(){ // метод просто возвращает переменную _rpm которая хранит в себе текущую скорость
 	return _rpm;
 }
 
-void BLDC::setStep(int step){
+void BLDC::setStep(int step){ // в зависимости от переданного параметра(шаг) переключаем пины
 
   _step = step + _offset;
-  if (_step > 6) { _step = _step - 6; }
-  if (_step < 1) { _step = _step + 6; }
+  while (_step > 6) { _step = _step - 6; } // если коряво задано смещение - двигаем шаг в зону от 1 до 6
+  while (_step < 1) { _step = _step + 6; }
 
-  switch(_step)
+  switch(_step) // в зависимости от текущего шага включаем соответствующие пины
   {
       case 1:
-          switchPhase(1, 0, 0, 1, 0, 0);
+          switchPhase(1, 0, 0, 1, 0, 0); // переключаем пины через метод switchPhase
 		  break;
       case 2:
           switchPhase(1, 0, 0, 0, 0, 1);    
@@ -94,13 +94,13 @@ void BLDC::setStep(int step){
           switchPhase(0, 0, 0, 1, 1, 0);   
 		  break;
       default:
-  		  switchPhase(0, 0, 0, 0, 0, 0);    
+  		  switchPhase(0, 0, 0, 0, 0, 0);
 		  break;
   }
 }
 
-void BLDC::switchPhase(bool TAH, bool TAL, bool TBH, bool TBL, bool TCH, bool TCL)
-{
+void BLDC::switchPhase(bool TAH, bool TAL, bool TBH, bool TBL, bool TCH, bool TCL) 
+{// этот метод включает заданные пины
   digitalWrite(_TAH, TAH ? HIGH : LOW);
   pwmWrite(_TAL, TAL ? _pwm : 0);
   digitalWrite(_TBH, TBH ? HIGH : LOW);
