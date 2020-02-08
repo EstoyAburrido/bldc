@@ -33,6 +33,7 @@ void setup() {
     attachInterrupt (HallB, hallInterrupt, CHANGE);
     attachInterrupt (HallC, hallInterrupt, CHANGE);
     //bldc.setOffset(3); // Раскомментируй чтоб запустить двигатель в обратную сторону
+    bldc.setDelay(100); // задаём 100 микросек задержку между фазами в микросекундах, это 0.1мсек
 }
 
 void loop() {  
